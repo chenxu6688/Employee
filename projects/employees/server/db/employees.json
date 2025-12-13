@@ -1,0 +1,22 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "name": "映辰戌",
+      "position": "扫地",
+      "department": "研发部",
+      "entryDate": "2025-12-12",
+      "status": "试用",
+      "deletedAt": "2025-12-13T01:00:49.726Z"
+    },
+    {
+      "id": 2,
+      "name": "1",
+      "position": "1",
+      "department": "研发部",
+      "entryDate": "2025-12-01",
+      "status": "试用"
+    }
+  ],
+  "seq": 2
+}
