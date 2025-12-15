@@ -14,7 +14,7 @@ const emits = defineEmits<{
 }>()
 </script>
 <template>
-  <el-table :data="Array.isArray(props.rows) ? props.rows : []" border stripe v-loading="Boolean(props.loading)" @sort-change="({prop, order}) => emits('sort', {prop, order})">
+  <el-table :data="Array.isArray(props.rows) ? props.rows : []" border stripe @sort-change="({prop, order}) => emits('sort', {prop, order})">
     <el-table-column prop="id" label="ID" width="80" sortable="custom" />
     <el-table-column prop="name" label="姓名" width="140" sortable="custom" />
     <el-table-column prop="position" label="职位" width="160" />

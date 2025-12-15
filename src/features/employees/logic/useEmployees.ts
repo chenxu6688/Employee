@@ -41,8 +41,12 @@ export function useEmployees() {
       const { data } = await axios.get('/api/employees', {
         params: { page: page.value, pageSize: pageSize.value, sortBy: sortBy.value, sortOrder: sortOrder.value, keyword: keyword.value, department: department.value, status: status.value }
       })
-      rows.value = data.items
-      total.value = data.total
+      rows.value = Array.isArray(data?.items) ? data.items : []
+      total.value = Number(data?.total || 0)
+    } catch {
+      ElMessage.error('列表加载失败，请检查后端服务')
+      rows.value = []
+      total.value = 0
     } finally {
       loading.value = false
     }

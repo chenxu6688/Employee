@@ -12,7 +12,7 @@ onMounted(emp.fetchList)
   <el-container class="full">
     <el-header class="header">员工管理系统</el-header>
     <el-main>
-      <el-card>
+      <el-card v-loading="emp.loading">
         <EmployeesToolbar
           :keyword="emp.keyword"
           :department="emp.department"
