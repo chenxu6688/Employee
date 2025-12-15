@@ -15,15 +15,15 @@ const emits = defineEmits<{
 </script>
 <template>
   <div class="toolbar">
-    <el-input :model-value="props.keyword" placeholder="关键字搜索" style="width: 220px" @update:modelValue="v => emits('update:keyword', v)" @keyup.enter="emits('search')" />
-    <el-select :model-value="props.department" placeholder="部门筛选" clearable style="width: 180px" @update:modelValue="v => emits('update:department', v)" @change="emits('search')">
+    <el-input :model-value="String(props.keyword ?? '')" placeholder="关键字搜索" style="width: 220px" @update:modelValue="v => emits('update:keyword', v)" @keyup.enter="emits('search')" />
+    <el-select :model-value="String(props.department ?? '')" placeholder="部门筛选" clearable style="width: 180px" @update:modelValue="v => emits('update:department', v)" @change="emits('search')">
       <el-option label="研发部" value="研发部" />
       <el-option label="技术部" value="技术部" />
       <el-option label="产品部" value="产品部" />
       <el-option label="质量部" value="质量部" />
       <el-option label="数据部" value="数据部" />
     </el-select>
-    <el-select :model-value="props.status" placeholder="状态筛选" clearable style="width: 160px" @update:modelValue="v => emits('update:status', v)" @change="emits('search')">
+    <el-select :model-value="String(props.status ?? '')" placeholder="状态筛选" clearable style="width: 160px" @update:modelValue="v => emits('update:status', v)" @change="emits('search')">
       <el-option label="在职" value="在职" />
       <el-option label="试用" value="试用" />
       <el-option label="离职" value="离职" />
