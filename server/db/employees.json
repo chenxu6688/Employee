@@ -1,0 +1,13 @@
+{
+  "employees": [
+    {
+      "id": 7,
+      "name": "臣",
+      "position": "1",
+      "department": "技术部",
+      "entryDate": "2025-12-01",
+      "status": "离职"
+    }
+  ],
+  "seq": 7
+}
