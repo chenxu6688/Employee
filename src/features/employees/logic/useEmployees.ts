@@ -13,6 +13,7 @@ export type Employee = {
 
 export function useEmployees() {
   const loading = ref(false)
+  const errorMsg = ref('')
   const total = ref(0)
   const page = ref(1)
   const pageSize = ref(10)
@@ -37,6 +38,7 @@ export function useEmployees() {
 
   const fetchList = async () => {
     loading.value = true
+    errorMsg.value = ''
     try {
       const { data } = await axios.get('/api/employees', {
         params: { page: page.value, pageSize: pageSize.value, sortBy: sortBy.value, sortOrder: sortOrder.value, keyword: keyword.value, department: department.value, status: status.value }
@@ -44,7 +46,8 @@ export function useEmployees() {
       rows.value = Array.isArray(data?.items) ? data.items : []
       total.value = Number(data?.total || 0)
     } catch {
-      ElMessage.error('列表加载失败，请检查后端服务')
+      errorMsg.value = '列表加载失败，请检查后端服务'
+      ElMessage.error(errorMsg.value)
       rows.value = []
       total.value = 0
     } finally {
@@ -95,7 +98,7 @@ export function useEmployees() {
 
   return {
     // list state
-    loading, total, page, pageSize, sortBy, sortOrder, keyword, department, status, rows,
+    loading, errorMsg, total, page, pageSize, sortBy, sortOrder, keyword, department, status, rows,
     // form state
     formVisible, formTitle, formData, formRules,
     // actions

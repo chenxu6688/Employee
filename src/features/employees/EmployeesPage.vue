@@ -13,6 +13,10 @@ onMounted(emp.fetchList)
     <el-header class="header">员工管理系统</el-header>
     <el-main>
       <el-card v-loading="emp.loading">
+        <el-alert v-if="emp.errorMsg" :title="emp.errorMsg" type="error" show-icon style="margin-bottom:12px" />
+        <div class="actions" style="margin-bottom:8px">
+          <el-button @click="emp.fetchList">刷新</el-button>
+        </div>
         <EmployeesToolbar
           :keyword="emp.keyword"
           :department="emp.department"
