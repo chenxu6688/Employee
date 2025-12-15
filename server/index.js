@@ -9,15 +9,22 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const dbDir = path.join(process.cwd(), 'projects', 'employees', 'server', 'db')
+const dbDir = path.join(process.cwd(), 'server', 'db')
 fs.mkdirSync(dbDir, { recursive: true })
-const adapter = new JSONFile(path.join(dbDir, 'employees.json'))
+const dbFile = path.join(dbDir, 'employees.json')
+const adapter = new JSONFile(dbFile)
 const db = new Low(adapter, { employees: [], seq: 0 })
 await db.read()
 db.data ||= { employees: [], seq: 0 }
 
-function list({ page=1, pageSize=10, sortBy='id', sortOrder='asc', keyword='', department='', status='' }) {
-  let items = db.data.employees.filter(e => !e.deletedAt)
+fs.watch(dbFile, async () => {
+  try {
+    await db.read()
+  } catch {}
+})
+
+function list({ page=1, pageSize=10, sortBy='id', sortOrder='asc', keyword='', department='', status='', includeDeleted=false }) {
+  let items = includeDeleted ? db.data.employees.slice() : db.data.employees.filter(e => !e.deletedAt)
   if (keyword) items = items.filter(e => (e.name.includes(keyword) || e.position.includes(keyword)))
   if (department) items = items.filter(e => e.department === department)
   if (status) items = items.filter(e => e.status === status)
@@ -33,7 +40,7 @@ function list({ page=1, pageSize=10, sortBy='id', sortOrder='asc', keyword='', d
 }
 
 app.get('/api/employees', (req, res) => {
-  const { page, pageSize, sortBy, sortOrder, keyword, department, status } = req.query
+  const { page, pageSize, sortBy, sortOrder, keyword, department, status, includeDeleted } = req.query
   res.json(list({
     page: Number(page || 1),
     pageSize: Number(pageSize || 10),
@@ -41,7 +48,8 @@ app.get('/api/employees', (req, res) => {
     sortOrder: String(sortOrder || 'asc'),
     keyword: String(keyword || ''),
     department: String(department || ''),
-    status: String(status || '')
+    status: String(status || ''),
+    includeDeleted: String(includeDeleted || '') === 'true'
   }))
 })
 
@@ -71,11 +79,19 @@ app.put('/api/employees/:id', async (req, res) => {
   res.json({ updated: 1 })
 })
 
+app.delete('/api/employees/purge-deleted', async (req, res) => {
+  const before = db.data.employees.length
+  db.data.employees = db.data.employees.filter(e => !e.deletedAt)
+  const after = db.data.employees.length
+  await db.write()
+  res.json({ purged: before - after })
+})
+
 app.delete('/api/employees/:id', async (req, res) => {
   const id = Number(req.params.id)
-  const row = db.data.employees.find(e => e.id === id)
-  if (!row || row.deletedAt) return res.status(404).json({ message: 'Not found' })
-  row.deletedAt = new Date().toISOString()
+  const exists = db.data.employees.some(e => e.id === id)
+  if (!exists) return res.status(404).json({ message: 'Not found' })
+  db.data.employees = db.data.employees.filter(e => e.id !== id)
   await db.write()
   res.json({ deleted: 1 })
 })

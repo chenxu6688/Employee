@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import EmployeesApp from './components/EmployeesApp.vue'
+import EmployeesPage from './features/employees/EmployeesPage.vue'
 </script>
 <template>
-  <EmployeesApp />
+  <EmployeesPage />
 </template>
